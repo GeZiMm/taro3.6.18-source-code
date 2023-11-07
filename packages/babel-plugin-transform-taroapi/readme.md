@@ -42,13 +42,12 @@ export { Taro };
 
 ### 1. 从__test__开始
 
-*直接运行测试用例，控制台可能会报错，原因是依赖的包，没有安装，到对应的包下，去执行```pnm run build```即可;
+直接运行测试用例，如果报错，可能是依赖的包，没有安装，到对应的包下，去执行```pnm run build```即可;
 ![img.png](img.png)
 
-#### i. 核心函数：babelTransform
+#### i. 核心插件：``` plugin ```
 
 ```javascript
-// 核心就是看导出的 plugin 工作流程
 import plugin from '../src'
 import * as definition from '@tarojs/plugin-platform-h5/dist/definition.json'
 
