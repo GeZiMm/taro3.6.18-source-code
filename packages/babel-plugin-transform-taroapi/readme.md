@@ -1,10 +1,10 @@
 ## 介绍：
 
-是一个 Babel 插件，它的作用是将 Taro API 的调用转换为对应的小程序 API 调用。
+是一个 Babel 插件，它的作用是**将 Taro API 的调用转换为对应的小程序 API 调用**。
 
-> Taro提供了一套类似于React的API，用于开发多端应用。但是，不同的小程序端有不同的 API，因此 Taro 需要将 Taro API 转换为对应的小程序
-> API。
-> ```babel-plugin-transform-taroapi``` 就是用来完成这个转换的插件。
+Taro提供了一套类似于React的API，用于开发多端应用。但是，不同的小程序端有不同的 API，因此 Taro 需要将 Taro API 转换为对应的小程序
+API。
+```babel-plugin-transform-taroapi``` 就是用来完成这个转换的插件。
 
 ## 使用：
 
@@ -15,25 +15,41 @@
 ### 2. 用法
 
 ```JSX
+// .babelrc
+{
+  "plugins": ["babel-plugin-transform-taroapi", {
+    packageName, // 举例 '@tarojs/taro-h5'
+    definition,
+  }]
+}
 ```
 
 ### 3. 示例
 
-```JSX
+```javascript
+import Taro, { setStorage } from '${packageName}';
+setStorage()
+export { Taro }
+
+// ⬇️ 转换后 ⬇️
+
+import Taro, { setStorage as _setStorage} from '@tarojs/taro-h5';
+_getStorage();
+export { Taro };
 ```
 
 ## 源码：
 
 ### 1. 从__test__开始
 
-> 直接运行测试用例，控制台可能会报错，原因是依赖的包，没有安装，通过控制台，不断的去寻找对应的包，去执行```pnm run build```即可;
-> 在运行的时候，会遇到一些代码报错，基本上把报错的地方加一下@ts-ignore就没问题了。
->
+*直接运行测试用例，控制台可能会报错，原因是依赖的包，没有安装，通过控制台，不断的去寻找对应的包，去执行```pnm run build```即可;
+在运行的时候，会遇到一些代码报错，基本上把报错的地方加一下@ts-ignore就没问题了。*
 ![img.png](img.png)
 >
 > 本来通过最外层的pnpm run build，应该是能给所有包进行build操作的，但不知道为什么一直抱一个tsc的错误，先放着，不影响阅读进度
 > T=T
-> ![img_1.png](img_1.png)
+
+![img_1.png](img_1.png)
 
 #### i. 核心函数：babelTransform
 
@@ -57,7 +73,7 @@ const result = babelTransform(code)
 expect(result?.code).toMatchSnapshot()
 ```
 
-#### ii. 插件功能演示
+#### ii. 功能演示
 
 > 1）验证插件是否能够正确地处理已实现的 Taro API
 
