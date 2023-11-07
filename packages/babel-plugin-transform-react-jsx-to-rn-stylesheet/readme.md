@@ -1,5 +1,12 @@
 ## 介绍：
-> babel样式插件：将JSX中的样式转化为样式表，简单理解就是：
+是一个 Babel 插件，它的作用是将 React JSX 中的样式转换为 React Native 的样式表。
+它可以帮助你在 React Native 中使用 JSX 编写样式，并将其转换为相应的 React Native 样式表。
+
+这个插件通常在 React Native 项目中使用，它可以帮助你在 React Native 项目中使用 JSX 编写样式，并将其转换为兼容的 React Native 样式表。
+
+你可以在 .babelrc 或 babel.config.js 文件中找到它的配置。
+
+简单理解就是：
 将 className={'header'} 转为 style={_styleSheet.header}
 
 ## 使用：
@@ -8,14 +15,18 @@
 > npm install --save-dev babel-plugin-transform-react-jsx-to-rn-stylesheet
 
 ### 2. 用法
-```JSX
+```yml
 // .babelrc
 {
-  "plugins": ["transform-react-jsx-to-rn-stylesheet"]
+  "plugins": ["transform-react-jsx-to-rn-stylesheet", {
+      enableCSSModule: false,
+      /* 是否开启多类名转换 */
+      enableMultipleClassName: false,
+    }]
 }
 ```
 ### 3. 示例
-```JSX
+```javascript
 import { Component } from 'react';
 import './app.css';
 class App extends Component {
@@ -25,7 +36,7 @@ class App extends Component {
 }
 ```
 ⬇️ 转换后
-```JSX
+```javascript
 import { Component } from 'react';
 import appCssStyleSheet from './app.css';
 
@@ -56,7 +67,7 @@ class App extends Component {
 ```
 #### i. 核心函数：getTransformCode
 通过babel的transform方法，获取转换后的code，**jSXStylePlugin**就是```babel-plugin-transform-react-jsx-to-rn-stylesheet```导出的插件
-```JSX
+```javascript
 const code = transform(source, {
   plugins: [[jSXStylePlugin, { enableCSSModule, enableMultipleClassName }], syntaxJSX],
   configFile: false
@@ -64,7 +75,7 @@ const code = transform(source, {
 ```
 #### ii. 插件功能演示
 > 1）没有import css文件
-```JSX
+```javascript
 // 未引入样式表，比如index.css或者index.less这种
 import { createElement, Component } from 'rax';
 
@@ -85,7 +96,7 @@ class App extends Component {
 ```
 
 > 2）引入了css文件，且只有一个className
-```JSX
+```javascript
 import { createElement, Component } from 'rax';
 import './app.css';
 
@@ -108,7 +119,7 @@ class App extends Component {
 ```
 
 > 3）引入css文件，且包含多个className
-```JSX
+```javascript
 import { createElement, Component } from 'rax';
 import './app.css';
 
@@ -137,7 +148,7 @@ class App extends Component {
 
 ### 2. 深入到源码：src/index.ts
 其实整个ts文件，就是为了提供了一个插件给babel：jSXStylePlugin
-```jsx
+```javascript
 import { transform } from '@babel/core'
 import jSXStylePlugin from '../src/index'
 
@@ -150,7 +161,7 @@ const code = transform(source, {
 babel插件中的visitor对象：
 visitor是一个包含不同节点类型的处理函数的对象。
 每个节点类型都有一个对应的处理函数，当Babel遍历AST时，如果遇到匹配的节点类型，就会调用相应的处理函数来处理该节点。
-```jsx
+```javascript
 // return了一个babel插件
 return {
   name: 'transform-react-jsx-to-rn-stylesheet',
@@ -205,7 +216,7 @@ return {
 }
 ```
 #### ii. 具体分析JSXOpeningElement处理函数
-```jsx
+```javascript
 JSXOpeningElement (astPath, state: PluginPass) {
   const { node } = astPath; // 1. 拿到对应的JSX节点
   const { file, opts = {} } = state; // 2. 拿到源码文件
