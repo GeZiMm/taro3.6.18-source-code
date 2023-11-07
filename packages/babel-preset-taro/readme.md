@@ -1,5 +1,10 @@
 ## 介绍：
+是一个 Babel 预设插件，用于转换 Taro 框架的代码。
+具体来说，`babel-preset-taro` 插件提供了一组 Babel 插件和配置，
+用于将 Taro 框架的代码转换为可以在不同环境中运行的代码。
+它包括了一些常用的 Babel 插件，例如 `babel-plugin-transform-taroapi`、`babel-plugin-transform-class-properties`、`babel-plugin-transform-decorators-legacy` 等，用于处理 Taro 框架的特定语法和语义。
 
+使用 `babel-preset-taro` 插件可以帮助开发者将使用 Taro 框架编写的代码转换为可以在不同环境中运行的代码，例如浏览器、小程序等。这样可以确保代码的兼容性和可移植性，并且可以在不同的环境中运行。
 ## 使用：
 
 ### 1. 用法
@@ -11,7 +16,7 @@ const config = babelPresetTaro({}, {
 })
 ```
 
-### 3. 示例
+### 2. 示例
 
 ```javascript
 const config = babelPresetTaro({}, {
@@ -89,35 +94,6 @@ const config = {
 
 ## 源码：
 
-### 1. 从__test__开始
-
-```javascript
-```
-
-#### i. 核心函数：getTransformCode
-
-```javascript
-```
-
-#### ii. 插件功能演示
-
-> 1）没有import css文件
-
-```javascript
-```
-
-> 2）引入了css文件，且只有一个className
-
-```javascript
-```
-
-> 3）引入css文件，且包含多个className
-
-```javascript
-```
-
-### 2. 深入到源码：babel-preset-taro/index.js
-
 ```javascript
 module.exports = (_, options) => {
   const presets = [], plugins = [], overrides = []; // 初始化
@@ -127,10 +103,13 @@ module.exports = (_, options) => {
     presets.push(xxx)
   }
   if (options.framework === 'react') {
+    // push(xxx)
   }
   if (options.framework === 'vue') {
+    // push(xxx)
   }
   if (options.framework === 'vue3') {
+    // push(xxx)
   }
   if (options.ts) {
     presets.push([require('@babel/preset-typescript'), config])
