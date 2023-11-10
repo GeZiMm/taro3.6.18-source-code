@@ -23,61 +23,95 @@ plugins.push(htmlTransform({
 ### 3. 示例
 
 ```css
-div {
+/* 当前platform: 'h5',*/
+view {
   background-color: blue;
 }
 
 /* ⬇️ 转换后 ⬇️*/
 
-taro-div-core {
+taro-view-core {
   background-color: blue;
 }
 ```
 
 ## 源码：
 
-### 1. 核心函数：walkRules
+### 1. __test__
+
+这个插件在项目中未提供单测，可以自行添加一个
+
+#### 1. 创建`__test__`文件夹，并新增`index.spec.js`文件
+
+#### 2. 新增测试用例
 
 ```javascript
-const postcssHtmlTransform = (options: IOptions = {}) => {
-  switch (options.platform) { /* 当前编译平台 */
-    case 'h5': {
-      selectorFilter = tags2Rgx(miniAppTags); // miniAppTags 小程序相关标签：'cover-image', 'cover-view', 'match-media', 'movable-area'...
-      walkRules = (rule: Rule) => {
-        rule.selector = rule.selector.replace(selectorFilter, '$1taro-$2-core');
-      };
-      break;
+'use strict'
+const postcss = require('postcss')
+const postcssHtmlTransform = require('../index')
+
+describe('postcss html trans', () => {
+  it('should transform HTML tags', () => {
+    const css = `
+    p {
+      display: block;
     }
-    case 'rn': {
-      break;
+    p .test {
+      display: block;
     }
-    case 'quickapp': {
-      break;
+  `
+    const result = postcss([postcssHtmlTransform({ platform: 'weapp' })]).process(css).css
+
+    expect(result).toBe(`.h5-p {
+      display: block;
     }
-    default: {
-      const selector = tags2Rgx(htmlTags); // htmlTags 相关标签：'html', 'body', 'a', 'audio', 'button', 'canvas'...
-      walkRules = (rule: Rule) => {
-        if (/(^| )\*(?![=/*])/.test(rule.selector)) {
-          rule.remove();
-          return;
-        }
-        rule.selector = rule.selector.replace(selector, '$1.h5-$2');
-      };
+    .h5-p .test {
+      display: block;
+    }`)
+  })
+})
+```
+
+### 2. 核心函数：walkRules
+
+```javascript
+'use strict'
+const postcss = require('postcss')
+const postcssHtmlTransform = require('../index')
+
+describe('postcss html trans', () => {
+  it('should transform HTML tags', () => {
+    const css = `
+    p {
+      display: block;
     }
-  }
-};
+    p .test {
+      display: block;
+    }`
+    const result = postcss([postcssHtmlTransform({ platform: 'weapp' })]).process(css).css
+
+    expect(result).toBe(`
+    .h5-p {
+      display: block;
+    }
+    .h5-p .test {
+      display: block;
+    }`)
+  })
+})
+
 ```
 
 #### ii. 插件功能演示
 
 在`h5`环境下，遇到了`小程序标签`，则将其转换为taro标记
 
-##### 1）platform === 'h5'，待编译html为 `<div></div>`，经插件转换后：`<div></div>`
+##### 1）platform === 'h5'，待编译html tag为 `div`，经插件转换后：`div`
 
-##### 2）platform === 'h5'，待编译html为 `<view></view>`，经插件转换后：`<taro-view-core></taro-view-core>`
+##### 2）platform === 'h5'，待编译html为 `view`，经插件转换后：`taro-view-core`
 
 在`小程序`环境下，遇到了`h5标签`，则将其转换为taro标记
 
-##### 1）platform === 'weapp'，待编译html为 `<view></view>`，经插件转换后：`<view></view>`
+##### 1）platform === 'weapp'，待编译html为 `view`，经插件转换后：`view`
 
-##### 2）platform === 'weapp'，待编译html为 `<div></div>`，经插件转换后：`<.h5-div></.h5-div>`
+##### 2）platform === 'weapp'，待编译html为 `div`，经插件转换后：`.h5-div`
